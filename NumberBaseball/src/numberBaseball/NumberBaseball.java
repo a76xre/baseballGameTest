@@ -1,4 +1,4 @@
-package numberBaseball;
+package NumberBaseball.src.numberBaseball;
 
 import utils.Console;
 import utils.Randoms;
