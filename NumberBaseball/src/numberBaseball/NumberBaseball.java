@@ -1,4 +1,4 @@
-package NumberBaseball.src.numberBaseball;
+package numberBaseball;
 
 import utils.Console;
 import utils.Randoms;
@@ -7,18 +7,28 @@ public class NumberBaseball {
 	public static void main(String[] args) {
 		
 		String Answer = makeNumberList();
+		System.out.println(Answer);
 		playGame(Answer);
-		System.out.println("게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.");
-		String flag = Console.readLine();
-		while(!flag.equals("2")) {
+		String userAnser = checkNewGame();
+		while(!userAnser.equals("2")) {
 			Answer = makeNumberList();
+			System.out.println(Answer);
 			playGame(Answer);
-			System.out.println("게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.");
-			flag = Console.readLine();
+			userAnser = checkNewGame();
 		}
-		return;
 	}
-	
+
+	//새 게임 진행여부 판단.
+	public static String checkNewGame(){
+		System.out.println("게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.");
+		String userAnswer = Console.readLine();
+		while (!userAnswer.equals("1") && !userAnswer.equals("2")){
+			System.out.println("게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.");
+			userAnswer = Console.readLine();
+		}
+		return userAnswer;
+	}
+
 	// 정답(숫자3개)를 만들어내는 메소드.
 	public static String makeNumberList() {
 		int[] Answer = new int[3];
@@ -29,8 +39,7 @@ public class NumberBaseball {
 			Answer[1] = Randoms.pickNumberInRange(0, 9);
 			Answer[2] = Randoms.pickNumberInRange(0, 9);
 		}
-		String result = Integer.toString(Answer[0])+Integer.toString(Answer[1])+Integer.toString(Answer[2]);
-		return result;
+		return Integer.toString(Answer[0])+ Answer[1] + Answer[2];
 	}
 	
 	// 게임을 실행하는 메소드.
@@ -58,13 +67,12 @@ public class NumberBaseball {
 	
 	// 각 자리별로 스트라이크 아웃을 확인해서 스트링배열로 만들어주는 메소드.
 	public static String[] checkBS(String[] strike, String[] ball) {
-		String[] result = ball;
 		int i =0;
 		while(i<3) {
-			result[i]= (strike[i].equals("S")) ? "S" : ball[i] ;
+			ball[i]= (strike[i].equals("S")) ? "S" : ball[i] ;
 			i++;
 		}
-		return result;
+		return ball;
 	}
 	
 	// 게임결과를 판단하는 메소드.
@@ -89,25 +97,54 @@ public class NumberBaseball {
 		}
 		return true;
 	}
-	
+
+	//중복숫자 확인.
+	public static boolean checkDuplicateNum(String num){
+		String[] temp = num.split("");
+		if (temp[0].equals(temp[1]) || temp[1].equals(temp[2]) || temp[0].equals(temp[2])){
+			System.out.println("중복되지 않는 숫자를 입력해주세요.");
+			return false;
+		}
+		return true;
+	}
+
+	//3자리 수 판별.
+	public static boolean checkIsLength3(String num){
+		if(!(num.length() ==3)){
+			System.out.println("3자리 수를 입력해주세요.");
+			return false;
+		}
+		return checkDuplicateNum(num);
+	}
+
+	//예외 처리
+	public static boolean checkException(String num){
+		//숫자를 입력했는지 판별.
+		if (!checkIsInt(num)) {
+			return false;
+		}
+		//자리수를 판별.
+		return checkIsLength3(num);
+	}
+
 	// 게임을 반복 실행하는 메소드.
 	public static void playGame(String Answer) {
 		String result = "OOO";
-		boolean flag = true;
-		String userNumList = "";
-		while (!result.equals("SSS") && flag) {
+		boolean flag;
+		String userNumList;
+		while (!result.equals("SSS")) {
 			//유저 숫자 입력.
 			System.out.print("숫자를 입력하세요. : ");
 			userNumList = Console.readLine();
-			//숫자를 입력했는지 판별.
-			flag = checkIsInt(userNumList);
-			
+
+			//예외 확인.
+			flag = checkException(userNumList);
+
 			//베이스볼 게임 시작
-			result = baseballGame(userNumList,Answer);
-			
+			result = flag ? baseballGame(userNumList,Answer) : "OOO";
+
 			System.out.println(resultToString(result));
 		}
 		System.out.println("3개의 숫자를 모두 맞추셨습니다! 게임 종료");
-		return ;
 	}
 }
