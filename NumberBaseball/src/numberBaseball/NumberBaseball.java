@@ -1,7 +1,5 @@
 package numberBaseball;
 
-import numberBaseball.CheckExepction;
-import numberBaseball.CheckStrike;
 import utils.Console;
 import utils.Randoms;
 
